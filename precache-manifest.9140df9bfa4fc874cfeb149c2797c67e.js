@@ -1,39 +1,39 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "6440c8d4895193db1cf493631ac78974",
+    "revision": "a2721cd4be2dec13acaaefdb2d73c5fa",
     "url": "/index.html"
   },
   {
-    "revision": "b2b08e0c1c6a252096e3",
+    "revision": "a9774f78c067f5abf9fa",
     "url": "/static/css/3.cffc9e54.chunk.css"
   },
   {
-    "revision": "e2e499fcf8cc86260aa0",
+    "revision": "616ab04056c0f4880ba9",
     "url": "/static/css/4.54df59d4.chunk.css"
   },
   {
-    "revision": "71f53a9765c0ad045719",
-    "url": "/static/css/main.b93c1d23.chunk.css"
+    "revision": "6d6934b8e29119f7329f",
+    "url": "/static/css/main.2f3ebb88.chunk.css"
   },
   {
-    "revision": "256889736cd54f29f635",
-    "url": "/static/js/2.cc5dcd13.chunk.js"
+    "revision": "fedf73e7c3801165ab13",
+    "url": "/static/js/2.416860b0.chunk.js"
   },
   {
-    "revision": "b2b08e0c1c6a252096e3",
-    "url": "/static/js/3.a71844e1.chunk.js"
+    "revision": "a9774f78c067f5abf9fa",
+    "url": "/static/js/3.5be485ca.chunk.js"
   },
   {
-    "revision": "e2e499fcf8cc86260aa0",
-    "url": "/static/js/4.c5d41c06.chunk.js"
+    "revision": "616ab04056c0f4880ba9",
+    "url": "/static/js/4.d03814b0.chunk.js"
   },
   {
-    "revision": "71f53a9765c0ad045719",
-    "url": "/static/js/main.ac1a3029.chunk.js"
+    "revision": "6d6934b8e29119f7329f",
+    "url": "/static/js/main.eaab05c7.chunk.js"
   },
   {
-    "revision": "8734e170bb3e3c6770f0",
-    "url": "/static/js/runtime-main.79eac584.js"
+    "revision": "9adad57d4332a1794c6d",
+    "url": "/static/js/runtime-main.5d033cdf.js"
   },
   {
     "revision": "9720660e0ab2ad8c0258df134afe5219",
@@ -70,6 +70,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "3440939881da8339d1597e8d77cdf850",
     "url": "/static/media/skill.34409398.svg"
+  },
+  {
+    "revision": "02c176fffc407ba5829d53de8498415b",
+    "url": "/static/media/stome.02c176ff.png"
   },
   {
     "revision": "0288c5ec7a87ea73f8d14b12fc4bc94e",
