@@ -1,39 +1,39 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "84e425599936e3c89b2c26a5dc89fe6b",
+    "revision": "cab01552e5d750a84056f29bd9768bd5",
     "url": "/index.html"
   },
   {
-    "revision": "37cd75be34dd1d605778",
-    "url": "/static/css/3.cffc9e54.chunk.css"
+    "revision": "032968dd2a0c7e94dbb5",
+    "url": "/static/css/3.f9898e9a.chunk.css"
   },
   {
-    "revision": "13b63ef6bbd35b32ddc0",
+    "revision": "f0422e1907ce2f985f63",
     "url": "/static/css/4.54df59d4.chunk.css"
   },
   {
-    "revision": "805b3d38c17a8618493a",
-    "url": "/static/css/main.9492e217.chunk.css"
+    "revision": "da3746977c6f97386ad5",
+    "url": "/static/css/main.ba60d789.chunk.css"
   },
   {
-    "revision": "7dfb739c879363345282",
-    "url": "/static/js/2.8c397081.chunk.js"
+    "revision": "76026bb062a2db86ece6",
+    "url": "/static/js/2.e3a3d672.chunk.js"
   },
   {
-    "revision": "37cd75be34dd1d605778",
-    "url": "/static/js/3.77843a56.chunk.js"
+    "revision": "032968dd2a0c7e94dbb5",
+    "url": "/static/js/3.88f8ba53.chunk.js"
   },
   {
-    "revision": "13b63ef6bbd35b32ddc0",
-    "url": "/static/js/4.fa1e1cb8.chunk.js"
+    "revision": "f0422e1907ce2f985f63",
+    "url": "/static/js/4.efe50db0.chunk.js"
   },
   {
-    "revision": "805b3d38c17a8618493a",
-    "url": "/static/js/main.3d981eca.chunk.js"
+    "revision": "da3746977c6f97386ad5",
+    "url": "/static/js/main.10974e1a.chunk.js"
   },
   {
-    "revision": "0670aecf79d037839269",
-    "url": "/static/js/runtime-main.1f4ca0cd.js"
+    "revision": "473e9eb79a73d18eb544",
+    "url": "/static/js/runtime-main.bca12e87.js"
   },
   {
     "revision": "9720660e0ab2ad8c0258df134afe5219",
@@ -48,12 +48,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/Montserrat-Regular.ee653992.ttf"
   },
   {
-    "revision": "68e841388612be0c5143e2932fb77d4f",
-    "url": "/static/media/contactMail.68e84138.webp"
+    "revision": "5431acabf4e9512740fc7e08a4895852",
+    "url": "/static/media/bananabuzz.5431acab.png"
   },
   {
-    "revision": "59389695208d7454c6607bed51ed4316",
-    "url": "/static/media/developerActivity.59389695.svg"
+    "revision": "68e841388612be0c5143e2932fb77d4f",
+    "url": "/static/media/contactMail.68e84138.webp"
   },
   {
     "revision": "c60a9b3ed8ccb5dd7391b8d71452f0e6",
@@ -68,8 +68,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/manOnTable.52be3144.svg"
   },
   {
-    "revision": "90c0e5963058a32d73654f120ac2e5b1",
-    "url": "/static/media/planer.90c0e596.png"
+    "revision": "c1a95f7335cbfb730b937e19e8830a53",
+    "url": "/static/media/programmer.c1a95f73.svg"
   },
   {
     "revision": "3440939881da8339d1597e8d77cdf850",
@@ -82,5 +82,9 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "0288c5ec7a87ea73f8d14b12fc4bc94e",
     "url": "/static/media/talksCardBack.0288c5ec.svg"
+  },
+  {
+    "revision": "a0e632e65723b03f141661d8acbc11ad",
+    "url": "/static/media/unbox.a0e632e6.png"
   }
 ]);
