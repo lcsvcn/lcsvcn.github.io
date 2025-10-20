@@ -4,8 +4,7 @@ import SocialMedia from "../../components/socialMedia/SocialMedia";
 import { contactInfo } from "../../portfolio";
 
 export default function GithubProfileCard({ prof }) {
-  // Apollo cache objects are frozen in dev; never mutate props. Derive display label.
-  const hireableText = prof?.isHireable ? "Yes" : "No";
+  // Apollo cache objects are frozen in dev; never mutate props.
   const contributions = prof?.contributionsCollection?.contributionCalendar?.weeks || [];
   const totalCommits = prof?.contributionsCollection?.totalCommitContributions || 0;
   const followers = prof?.followers?.totalCount || 0;
@@ -39,34 +38,52 @@ export default function GithubProfileCard({ prof }) {
                 </span>
               </div>
             )}
-            <div className="opp-div">
-              <span className="desc-prof">Open for opportunities: {hireableText}</span>
-            </div>
-            {/* Simple stats row */}
-            <div className="gh-stats">
-              <span className="desc-prof">Followers: {followers}</span>
-              <span className="desc-prof">Following: {following}</span>
-              <span className="desc-prof">Repos: {repos}</span>
-              <span className="desc-prof">PRs: {prs}</span>
-              <span className="desc-prof">Issues: {issues}</span>
-              <span className="desc-prof">Commits (year): {totalCommits}</span>
-            </div>
-            {/* Minimal contribution heatmap (compact) */}
-            <section className="gh-heatmap" aria-label="GitHub contribution calendar">
-              {contributions.map((week, wi) => (
-                // each week is ~7 days
-                <div key={wi} className="gh-heatmap-week">
-                  {week.contributionDays.map((d, di) => (
-                    <span
-                      key={di}
-                      className="gh-heatmap-day"
-                      title={`${d.date}: ${d.contributionCount} contributions`}
-                      style={{ backgroundColor: d.color }}
-                    />
-                  ))}
+            <div className="activity-card">
+              <h3 className="activity-title">GitHub Activity</h3>
+              {/* Minimal contribution heatmap (compact) */}
+              <section className="gh-heatmap" aria-label="GitHub contribution calendar">
+                {contributions.map((week, wi) => (
+                  // each week is ~7 days
+                  <div key={wi} className="gh-heatmap-week">
+                    {week.contributionDays.map((d, di) => (
+                      <span
+                        key={di}
+                        className="gh-heatmap-day"
+                        title={`${d.date}: ${d.contributionCount} contributions`}
+                        style={{ backgroundColor: d.color }}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </section>
+              {/* Stats grid with emphasized values */}
+              <div className="gh-stats">
+                <div className="gh-stat">
+                  <div className="gh-stat-value">{followers}</div>
+                  <div className="gh-stat-label">Followers</div>
                 </div>
-              ))}
-            </section>
+                <div className="gh-stat">
+                  <div className="gh-stat-value">{following}</div>
+                  <div className="gh-stat-label">Following</div>
+                </div>
+                <div className="gh-stat">
+                  <div className="gh-stat-value">{repos}</div>
+                  <div className="gh-stat-label">Repos</div>
+                </div>
+                <div className="gh-stat">
+                  <div className="gh-stat-value">{prs}</div>
+                  <div className="gh-stat-label">PRs</div>
+                </div>
+                <div className="gh-stat">
+                  <div className="gh-stat-value">{issues}</div>
+                  <div className="gh-stat-label">Issues</div>
+                </div>
+                <div className="gh-stat gh-stat-accent">
+                  <div className="gh-stat-value">{totalCommits}</div>
+                  <div className="gh-stat-label">Commits (year)</div>
+                </div>
+              </div>
+            </div>
             <SocialMedia />
           </div>
           <div className="image-content-profile">
