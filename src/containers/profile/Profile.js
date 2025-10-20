@@ -13,13 +13,22 @@ export default function Profile() {
     setrepo(array);
   }
   function getProfileData() {
+    const token = openSource.githubConvertedToken;
+    if (!token) {
+      console.warn(
+        "GitHub: REACT_APP_GITHUB_TOKEN not found. Showing Contact section instead of GitHub profile. Add a minimal read-only token to .env files before build.",
+      );
+      setProfileFunction("Error");
+      openSource.showGithubProfile = "false";
+      return;
+    }
     const httpLink = createHttpLink({ uri: "https://api.github.com/graphql" });
 
     const authLink = setContext((_, { headers }) => {
       return {
         headers: {
           ...headers,
-          authorization: `Bearer ${openSource.githubConvertedToken}`,
+          ...(token ? { authorization: `Bearer ${token}` } : {}),
         },
       };
     });

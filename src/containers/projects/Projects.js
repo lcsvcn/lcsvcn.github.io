@@ -7,13 +7,21 @@ import { openSource, socialMediaLinks } from "../../portfolio";
 import Loading from "../loading/Loading";
 
 function getRepoData(callback) {
+  const token = openSource.githubConvertedToken;
+  if (!token) {
+    console.warn(
+      "GitHub: REACT_APP_GITHUB_TOKEN not found. Skipping Open Source projects fetch. Provide a read-only token in .env.development/.env.production before building.",
+    );
+    callback("Error");
+    return;
+  }
   const httpLink = createHttpLink({ uri: "https://api.github.com/graphql" });
 
   const authLink = setContext((_, { headers }) => {
     return {
       headers: {
         ...headers,
-        authorization: `Bearer ${openSource.githubConvertedToken}`,
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
       },
     };
   });
