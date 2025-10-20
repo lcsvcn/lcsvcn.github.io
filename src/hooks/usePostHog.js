@@ -1,6 +1,21 @@
 import { usePostHog } from "posthog-js/react";
 import { useEffect } from "react";
 
+// Lightweight hash for stable identifiers (base36 for brevity)
+const __phHash = (input) => {
+  try {
+    let h = 0;
+    const s = String(input || "");
+    for (let i = 0; i < s.length; i++) {
+      h = (h << 5) - h + s.charCodeAt(i);
+      h |= 0; // 32-bit int
+    }
+    return Math.abs(h).toString(36);
+  } catch {
+    return undefined;
+  }
+};
+
 /**
  * PostHog Event Tracker Hook
  *
@@ -107,3 +122,140 @@ export const togglePostHogDebug = (enabled = true) => {
 if (typeof window !== "undefined") {
   window.togglePostHogDebug = togglePostHogDebug;
 }
+
+/**
+ * Global click tracker
+ * - Captures clicks on <a>, <button>, and elements with role="button"
+ * - Records basic context: text, href, id, classes
+ */
+export const usePostHogClickTracking = () => {
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    if (!posthog) return;
+    const handler = (e) => {
+      const target = e.target.closest("a, button, [role=button]");
+      if (!target) return;
+      // Preferred explicit analytics id, then DOM id
+      const phId =
+        target.getAttribute("data-ph-id") ||
+        target.getAttribute("data-analytics-id") ||
+        target.dataset?.phId ||
+        undefined;
+      const domId = target.id || undefined;
+      // Human-readable action label
+      const label =
+        target.getAttribute("data-action") ||
+        target.getAttribute("aria-label") ||
+        target.getAttribute("name") ||
+        (target.innerText || target.value || "").trim();
+      const href = target.tagName === "A" ? target.getAttribute("href") : undefined;
+      // Stable action identifier (deterministic)
+      const actionId = __phHash(
+        [
+          "v1", // version for future-proofing
+          phId || "",
+          domId || "",
+          target.tagName || "",
+          target.getAttribute("role") || "",
+          href || "",
+          label || "",
+          window.location.pathname || "",
+        ].join("|"),
+      );
+      const payload = {
+        tag: target.tagName,
+        role: target.getAttribute("role") || undefined,
+        id: domId, // keep existing field for backward compatibility
+        ph_id: phId || undefined,
+        action: label ? label.slice(0, 120) : undefined,
+        action_id: actionId,
+        classes: target.className || undefined,
+        text: (target.innerText || "").trim().slice(0, 120),
+        href,
+        path: window.location.pathname,
+      };
+      posthog.capture("ui_click", payload);
+      if (process.env.NODE_ENV === "development") {
+        console.log("🖱️ Click tracked", payload);
+      }
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [posthog]);
+};
+
+/**
+ * Scroll depth tracker
+ * - Emits events when the user reaches 25%, 50%, 75%, and 100% of page scroll
+ */
+export const usePostHogScrollDepth = () => {
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    if (!posthog) return;
+    const milestones = new Set([25, 50, 75, 100]);
+    const seen = new Set();
+
+    const getScrollPercent = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      if (docHeight <= 0) return 100;
+      return Math.min(100, Math.round((scrollTop / docHeight) * 100));
+    };
+
+    const onScroll = () => {
+      const pct = getScrollPercent();
+      for (const m of milestones) {
+        if (pct >= m && !seen.has(m)) {
+          seen.add(m);
+          posthog.capture("scroll_depth", { milestone: m, path: window.location.pathname });
+          if (process.env.NODE_ENV === "development") {
+            console.log("📏 Scroll depth milestone", m);
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    // Fire once in case of short pages
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [posthog]);
+};
+
+/**
+ * Session recording controls
+ * Helpers to start/stop or conditionally enable recording
+ */
+export const startSessionRecording = () => {
+  if (window?.posthog?.startSessionRecording) {
+    window.posthog.startSessionRecording();
+    if (process.env.NODE_ENV === "development") console.log("🎥 Session recording started");
+  }
+};
+
+export const stopSessionRecording = () => {
+  if (window?.posthog?.stopSessionRecording) {
+    window.posthog.stopSessionRecording();
+    if (process.env.NODE_ENV === "development") console.log("🛑 Session recording stopped");
+  }
+};
+
+/**
+ * usePostHogSessionRecording
+ * - Pass a boolean or function to control whether session recording is enabled
+ * Example: usePostHogSessionRecording(() => !location.pathname.startsWith('/payment'))
+ */
+export const usePostHogSessionRecording = (enabledOrFn = true) => {
+  const posthog = usePostHog();
+  useEffect(() => {
+    if (!posthog) return;
+    const enabled = typeof enabledOrFn === "function" ? !!enabledOrFn() : !!enabledOrFn;
+    if (enabled) {
+      posthog.startSessionRecording?.();
+    } else {
+      posthog.stopSessionRecording?.();
+    }
+  }, [posthog, enabledOrFn]);
+};
