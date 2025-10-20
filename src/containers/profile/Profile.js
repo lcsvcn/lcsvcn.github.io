@@ -44,10 +44,28 @@ export default function Profile() {
       {
         user(login:"${openSource.githubUserName}") {
           name
-          bio
           isHireable
           avatarUrl
           location
+          followers { totalCount }
+          following { totalCount }
+          repositories(privacy: PUBLIC, isFork: false) { totalCount }
+          pullRequests { totalCount }
+          issues { totalCount }
+          contributionsCollection {
+            totalCommitContributions
+            contributionCalendar {
+              totalContributions
+              weeks {
+                contributionDays {
+                  contributionCount
+                  date
+                  color
+                  weekday
+                }
+              }
+            }
+          }
         }
     }
       `,

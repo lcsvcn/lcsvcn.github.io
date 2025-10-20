@@ -1,12 +1,18 @@
 import "./GithubProfileCard.css";
 import { Fade } from "react-awesome-reveal";
-import emoji from "react-easy-emoji";
 import SocialMedia from "../../components/socialMedia/SocialMedia";
 import { contactInfo } from "../../portfolio";
 
 export default function GithubProfileCard({ prof }) {
   // Apollo cache objects are frozen in dev; never mutate props. Derive display label.
   const hireableText = prof?.isHireable ? "Yes" : "No";
+  const contributions = prof?.contributionsCollection?.contributionCalendar?.weeks || [];
+  const totalCommits = prof?.contributionsCollection?.totalCommitContributions || 0;
+  const followers = prof?.followers?.totalCount || 0;
+  const following = prof?.following?.totalCount || 0;
+  const repos = prof?.repositories?.totalCount || 0;
+  const prs = prof?.pullRequests?.totalCount || 0;
+  const issues = prof?.issues?.totalCount || 0;
   return (
     <Fade bottom duration={1000} distance="20px">
       <div className="main" id="contact">
@@ -16,7 +22,10 @@ export default function GithubProfileCard({ prof }) {
             <div className="blog-header">
               <p className="subTitle blog-subtitle">{contactInfo.subtitle}</p>
             </div>
-            <h2 className="bio-text">"{emoji(String(prof.bio))}"</h2>
+            {/* Hide GitHub bio per request; show email prominently */}
+            <div className="contact-email">
+              <span className="desc-prof">Email: {contactInfo.email_address}</span>
+            </div>
             {prof.location !== null && (
               <div className="location-div">
                 <span className="desc-prof">
@@ -33,6 +42,31 @@ export default function GithubProfileCard({ prof }) {
             <div className="opp-div">
               <span className="desc-prof">Open for opportunities: {hireableText}</span>
             </div>
+            {/* Simple stats row */}
+            <div className="gh-stats">
+              <span className="desc-prof">Followers: {followers}</span>
+              <span className="desc-prof">Following: {following}</span>
+              <span className="desc-prof">Repos: {repos}</span>
+              <span className="desc-prof">PRs: {prs}</span>
+              <span className="desc-prof">Issues: {issues}</span>
+              <span className="desc-prof">Commits (year): {totalCommits}</span>
+            </div>
+            {/* Minimal contribution heatmap (compact) */}
+            <section className="gh-heatmap" aria-label="GitHub contribution calendar">
+              {contributions.map((week, wi) => (
+                // each week is ~7 days
+                <div key={wi} className="gh-heatmap-week">
+                  {week.contributionDays.map((d, di) => (
+                    <span
+                      key={di}
+                      className="gh-heatmap-day"
+                      title={`${d.date}: ${d.contributionCount} contributions`}
+                      style={{ backgroundColor: d.color }}
+                    />
+                  ))}
+                </div>
+              ))}
+            </section>
             <SocialMedia />
           </div>
           <div className="image-content-profile">
