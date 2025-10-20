@@ -1,4 +1,5 @@
 import "./GithubProfileCard.css";
+import { useMemo } from "react";
 import { Fade } from "react-awesome-reveal";
 import SocialMedia from "../../components/socialMedia/SocialMedia";
 import { contactInfo } from "../../portfolio";
@@ -12,6 +13,30 @@ export default function GithubProfileCard({ prof }) {
   const repos = prof?.repositories?.totalCount || 0;
   const prs = prof?.pullRequests?.totalCount || 0;
   const issues = prof?.issues?.totalCount || 0;
+
+  // Determine intensity level (0-4) per day from contributionCount using GitHub-like bucketizing
+  const levelWeeks = useMemo(() => {
+    // Compute global max to scale buckets when counts are low
+    let max = 0;
+    for (const w of contributions) {
+      for (const d of w.contributionDays) max = Math.max(max, d.contributionCount || 0);
+    }
+    // Avoid divide by zero; if max is 0 all are level 0
+    const buckets = (count) => {
+      if (!max || count <= 0) return 0;
+      const q = count / max; // 0..1
+      if (q > 0.8) return 4;
+      if (q > 0.6) return 3;
+      if (q > 0.35) return 2;
+      return 1;
+    };
+    return contributions.map((w) => ({
+      contributionDays: w.contributionDays.map((d) => ({
+        ...d,
+        level: buckets(d.contributionCount || 0),
+      })),
+    }));
+  }, [contributions]);
   return (
     <Fade bottom duration={1000} distance="20px">
       <div className="main" id="contact">
@@ -40,55 +65,58 @@ export default function GithubProfileCard({ prof }) {
             )}
             <div className="activity-card">
               <h3 className="activity-title">GitHub Activity</h3>
-              {/* Minimal contribution heatmap (compact) */}
-              <section className="gh-heatmap" aria-label="GitHub contribution calendar">
-                {contributions.map((week, wi) => (
-                  // each week is ~7 days
-                  <div key={wi} className="gh-heatmap-week">
-                    {week.contributionDays.map((d, di) => (
-                      <span
-                        key={di}
-                        className="gh-heatmap-day"
-                        title={`${d.date}: ${d.contributionCount} contributions`}
-                        style={{ backgroundColor: d.color }}
-                      />
+              <div className="activity-card-content">
+                <div className="activity-card-avatar">
+                  <img src={prof.avatarUrl} alt={prof.name} className="profile-image" />
+                </div>
+                <div className="activity-card-main">
+                  {/* Minimal contribution heatmap (compact) */}
+                  <section className="gh-heatmap" aria-label="GitHub contribution calendar">
+                    {levelWeeks.map((week, wi) => (
+                      <div key={wi} className="gh-heatmap-week">
+                        {week.contributionDays.map((d, di) => (
+                          <span
+                            key={di}
+                            className={`gh-heatmap-day level-${d.level}`}
+                            title={`${d.date}: ${d.contributionCount} contributions`}
+                          />
+                        ))}
+                      </div>
                     ))}
+                  </section>
+                  {/* Stats grid with emphasized values */}
+                  <div className="gh-stats">
+                    <div className="gh-stat">
+                      <div className="gh-stat-value">{followers}</div>
+                      <div className="gh-stat-label">Followers</div>
+                    </div>
+                    <div className="gh-stat">
+                      <div className="gh-stat-value">{following}</div>
+                      <div className="gh-stat-label">Following</div>
+                    </div>
+                    <div className="gh-stat">
+                      <div className="gh-stat-value">{repos}</div>
+                      <div className="gh-stat-label">Repos</div>
+                    </div>
+                    <div className="gh-stat">
+                      <div className="gh-stat-value">{prs}</div>
+                      <div className="gh-stat-label">PRs</div>
+                    </div>
+                    <div className="gh-stat">
+                      <div className="gh-stat-value">{issues}</div>
+                      <div className="gh-stat-label">Issues</div>
+                    </div>
+                    <div className="gh-stat gh-stat-accent">
+                      <div className="gh-stat-value">{totalCommits}</div>
+                      <div className="gh-stat-label">Commits (year)</div>
+                    </div>
                   </div>
-                ))}
-              </section>
-              {/* Stats grid with emphasized values */}
-              <div className="gh-stats">
-                <div className="gh-stat">
-                  <div className="gh-stat-value">{followers}</div>
-                  <div className="gh-stat-label">Followers</div>
-                </div>
-                <div className="gh-stat">
-                  <div className="gh-stat-value">{following}</div>
-                  <div className="gh-stat-label">Following</div>
-                </div>
-                <div className="gh-stat">
-                  <div className="gh-stat-value">{repos}</div>
-                  <div className="gh-stat-label">Repos</div>
-                </div>
-                <div className="gh-stat">
-                  <div className="gh-stat-value">{prs}</div>
-                  <div className="gh-stat-label">PRs</div>
-                </div>
-                <div className="gh-stat">
-                  <div className="gh-stat-value">{issues}</div>
-                  <div className="gh-stat-label">Issues</div>
-                </div>
-                <div className="gh-stat gh-stat-accent">
-                  <div className="gh-stat-value">{totalCommits}</div>
-                  <div className="gh-stat-label">Commits (year)</div>
                 </div>
               </div>
             </div>
             <SocialMedia />
           </div>
-          <div className="image-content-profile">
-            <img src={prof.avatarUrl} alt={prof.name} className="profile-image" />
-          </div>
+          {/* Avatar moved inside activity card */}
         </div>
       </div>
     </Fade>

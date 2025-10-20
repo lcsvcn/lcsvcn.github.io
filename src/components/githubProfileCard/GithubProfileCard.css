@@ -1,3 +1,31 @@
+/*
+  GitHub Profile Card styling
+  - Adds light/dark variables for contribution graph (matches GitHub palettes)
+  - Places avatar inside the activity card to the left of the graph
+  - Keeps responsive behavior for small screens
+*/
+
+/* Palette variables for contribution graph (GitHub-like) */
+:root {
+  /* Light theme */
+  --gh-day-0: #ebedf0; /* empty */
+  --gh-day-1: #9be9a8; /* low */
+  --gh-day-2: #40c463; /* medium */
+  --gh-day-3: #30a14e; /* high */
+  --gh-day-4: #216e39; /* very high */
+  --gh-day-border: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] {
+  /* Dark theme */
+  --gh-day-0: #161b22; /* empty */
+  --gh-day-1: #0e4429; /* low */
+  --gh-day-2: #006d32; /* medium */
+  --gh-day-3: #26a641; /* high */
+  --gh-day-4: #39d353; /* very high */
+  --gh-day-border: rgba(255, 255, 255, 0.08);
+}
+
 /* Avatar */
 .profile-image {
   border-radius: 50%;
@@ -19,22 +47,13 @@
   font-weight: 600;
 }
 
-/* Layout: image left, content right */
+/* Layout: single column container; the activity card will handle inner layout */
 .row {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  grid-template-areas: "image content";
-  align-items: start;
-  gap: 2rem;
-}
-
-.image-content-profile {
-  grid-area: image;
-  text-align: left;
+  display: block;
 }
 
 .main-content-profile {
-  grid-area: content;
+  width: 100%;
 }
 
 /* Location text */
@@ -67,6 +86,24 @@
   height: 10px;
   display: inline-block;
   border-radius: 2px;
+  border: 1px solid var(--gh-day-border);
+}
+
+/* Heatmap levels using CSS variables (GitHub-like) */
+.gh-heatmap-day.level-0 {
+  background: var(--gh-day-0);
+}
+.gh-heatmap-day.level-1 {
+  background: var(--gh-day-1);
+}
+.gh-heatmap-day.level-2 {
+  background: var(--gh-day-2);
+}
+.gh-heatmap-day.level-3 {
+  background: var(--gh-day-3);
+}
+.gh-heatmap-day.level-4 {
+  background: var(--gh-day-4);
 }
 
 /* Activity stats */
@@ -138,23 +175,37 @@
   font-weight: 700;
 }
 
+/* Inner layout for activity card: avatar left, content right */
+.activity-card-content {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.activity-card-avatar {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.activity-card-main {
+  min-width: 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .row {
-    display: flex;
-    flex-direction: column;
+    display: block;
   }
 
   .main-content-profile {
     text-align: center;
-    order: 2;
   }
 
-  .image-content-profile {
-    margin-left: auto;
-    margin-right: auto;
-    order: 1;
-    text-align: center;
+  .activity-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .desc-prof {

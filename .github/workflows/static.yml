@@ -41,6 +41,7 @@ jobs:
         run: bun run build
         shell: bash
         env:
+          REACT_APP_GITHUB_TOKEN: ${{ secrets.REACT_APP_GITHUB_TOKEN }}
           REACT_APP_POSTHOG_KEY: ${{ secrets.REACT_APP_POSTHOG_KEY }}
           REACT_APP_POSTHOG_HOST: ${{ secrets.REACT_APP_POSTHOG_HOST }}
       - name: Setup Pages
