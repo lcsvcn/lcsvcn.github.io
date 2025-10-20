@@ -5,11 +5,8 @@ import SocialMedia from "../../components/socialMedia/SocialMedia";
 import { contactInfo } from "../../portfolio";
 
 export default function GithubProfileCard({ prof }) {
-  if (prof.hireable !== null) {
-    prof.hireable = "Yes";
-  } else {
-    prof.hireable = "No";
-  }
+  // Apollo cache objects are frozen in dev; never mutate props. Derive display label.
+  const hireableText = prof?.isHireable ? "Yes" : "No";
   return (
     <Fade bottom duration={1000} distance="20px">
       <div className="main" id="contact">
@@ -34,7 +31,7 @@ export default function GithubProfileCard({ prof }) {
               </div>
             )}
             <div className="opp-div">
-              <span className="desc-prof">Open for opportunities: {prof.hireable}</span>
+              <span className="desc-prof">Open for opportunities: {hireableText}</span>
             </div>
             <SocialMedia />
           </div>
