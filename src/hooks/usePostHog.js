@@ -1,4 +1,4 @@
-import { usePostHog } from "posthog-js/react";
+import posthog from "posthog-js";
 import { useEffect } from "react";
 
 // Lightweight hash for stable identifiers (base36 for brevity)
@@ -24,15 +24,13 @@ const __phHash = (input) => {
  * trackEvent('button_clicked', { buttonName: 'Sign Up' });
  */
 export const usePostHogTracker = () => {
-  const posthog = usePostHog();
-
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
       console.log("🔍 PostHog Debug Mode Enabled");
       console.log("PostHog User ID:", posthog?.get_distinct_id());
       console.log("PostHog Instance:", posthog);
     }
-  }, [posthog]);
+  }, []);
 
   const trackEvent = (eventName, properties = {}) => {
     if (!posthog) {
@@ -60,8 +58,6 @@ export const usePostHogTracker = () => {
  * Automatically tracks page views when the component mounts
  */
 export const usePostHogPageView = (pageName) => {
-  const posthog = usePostHog();
-
   useEffect(() => {
     if (posthog && pageName) {
       posthog.capture("$pageview", {
@@ -76,7 +72,7 @@ export const usePostHogPageView = (pageName) => {
         });
       }
     }
-  }, [posthog, pageName]);
+  }, [pageName]);
 };
 
 /**
@@ -84,8 +80,6 @@ export const usePostHogPageView = (pageName) => {
  * Use this to identify users with their email or ID
  */
 export const usePostHogIdentify = () => {
-  const posthog = usePostHog();
-
   const identify = (userId, userProperties = {}) => {
     if (!posthog) {
       console.warn("⚠️ PostHog not initialized");
@@ -129,8 +123,6 @@ if (typeof window !== "undefined") {
  * - Records basic context: text, href, id, classes
  */
 export const usePostHogClickTracking = () => {
-  const posthog = usePostHog();
-
   useEffect(() => {
     if (!posthog) return;
     const handler = (e) => {
@@ -182,7 +174,7 @@ export const usePostHogClickTracking = () => {
     };
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
-  }, [posthog]);
+  }, []);
 };
 
 /**
@@ -190,8 +182,6 @@ export const usePostHogClickTracking = () => {
  * - Emits events when the user reaches 25%, 50%, 75%, and 100% of page scroll
  */
 export const usePostHogScrollDepth = () => {
-  const posthog = usePostHog();
-
   useEffect(() => {
     if (!posthog) return;
     const milestones = new Set([25, 50, 75, 100]);
@@ -221,7 +211,7 @@ export const usePostHogScrollDepth = () => {
     // Fire once in case of short pages
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [posthog]);
+  }, []);
 };
 
 /**
@@ -248,7 +238,6 @@ export const stopSessionRecording = () => {
  * Example: usePostHogSessionRecording(() => !location.pathname.startsWith('/payment'))
  */
 export const usePostHogSessionRecording = (enabledOrFn = true) => {
-  const posthog = usePostHog();
   useEffect(() => {
     if (!posthog) return;
     const enabled = typeof enabledOrFn === "function" ? !!enabledOrFn() : !!enabledOrFn;
@@ -257,5 +246,5 @@ export const usePostHogSessionRecording = (enabledOrFn = true) => {
     } else {
       posthog.stopSessionRecording?.();
     }
-  }, [posthog, enabledOrFn]);
+  }, [enabledOrFn]);
 };

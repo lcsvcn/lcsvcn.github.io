@@ -1,4 +1,4 @@
-import { usePostHog } from "posthog-js/react";
+import posthog from "posthog-js";
 import { useEffect, useState } from "react";
 import "./PostHogDebugger.css";
 
@@ -8,7 +8,6 @@ import "./PostHogDebugger.css";
  * Add this component to your app to see events in real-time
  */
 export default function PostHogDebugger() {
-  const posthog = usePostHog();
   const [events, setEvents] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -17,9 +16,7 @@ export default function PostHogDebugger() {
     if (process.env.NODE_ENV !== "development") return;
 
     // Enable debug mode
-    if (posthog) {
-      posthog.debug(true);
-    }
+    posthog?.debug?.(true);
 
     // Intercept PostHog capture calls
     if (posthog?.capture) {
@@ -36,7 +33,7 @@ export default function PostHogDebugger() {
         return originalCapture(eventName, properties);
       };
     }
-  }, [posthog]);
+  }, []);
 
   if (process.env.NODE_ENV !== "development") return null;
 
@@ -65,7 +62,7 @@ export default function PostHogDebugger() {
 
           <div className="posthog-debugger-info">
             <p>
-              <strong>User ID:</strong> {posthog?.get_distinct_id()}
+              <strong>User ID:</strong> {posthog?.get_distinct_id?.()}
             </p>
             <p>
               <strong>Host:</strong> {process.env.REACT_APP_POSTHOG_HOST || "Not configured"}
@@ -91,7 +88,7 @@ export default function PostHogDebugger() {
           </div>
 
           <div className="posthog-debugger-actions">
-            <button type="button" onClick={() => posthog?.capture("test_event", { test: true })}>
+            <button type="button" onClick={() => posthog?.capture?.("test_event", { test: true })}>
               Send Test Event
             </button>
             <button type="button" onClick={() => console.log("PostHog Instance:", posthog)}>
