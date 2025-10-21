@@ -1,5 +1,5 @@
 import "./GithubProfileCard.css";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Fade } from "react-awesome-reveal";
 import SocialMedia from "../../components/socialMedia/SocialMedia";
 import { contactInfo } from "../../portfolio";
@@ -37,6 +37,26 @@ export default function GithubProfileCard({ prof }) {
       })),
     }));
   }, [contributions]);
+
+  const heatmapRef = useRef(null);
+
+  // Responsively grow cell size to fill width (never below 12px)
+  useEffect(() => {
+    function resizeCells() {
+      const el = heatmapRef.current;
+      if (!el) return;
+      const weeks = levelWeeks.length || 52;
+      const gap = 2; // match CSS gap
+      const width = el.clientWidth || el.getBoundingClientRect().width || 0;
+      if (!width || !weeks) return;
+      const cell = Math.max(12, Math.floor((width - (weeks - 1) * gap) / weeks));
+      el.style.setProperty("--gh-cell-size", `${cell}px`);
+    }
+    resizeCells();
+    window.addEventListener("resize", resizeCells);
+    return () => window.removeEventListener("resize", resizeCells);
+  }, [levelWeeks]);
+
   return (
     <Fade bottom duration={1000} distance="20px">
       <div className="main" id="contact">
@@ -64,14 +84,11 @@ export default function GithubProfileCard({ prof }) {
               </div>
             )}
             <div className="activity-card">
-              <h3 className="activity-title">GitHub Activity</h3>
               <div className="activity-card-content">
-                <div className="activity-card-avatar">
-                  <img src={prof.avatarUrl} alt={prof.name} className="profile-image" />
-                </div>
                 <div className="activity-card-main">
+                  <h3 className="activity-title">GitHub Activity</h3>
                   {/* Minimal contribution heatmap (compact) */}
-                  <section className="gh-heatmap" aria-label="GitHub contribution calendar">
+                  <section ref={heatmapRef} className="gh-heatmap" aria-label="GitHub contribution calendar">
                     {levelWeeks.map((week, wi) => (
                       <div key={wi} className="gh-heatmap-week">
                         {week.contributionDays.map((d, di) => (

@@ -6,12 +6,27 @@ import Button from "../../components/button/Button";
 import { openSource, socialMediaLinks } from "../../portfolio";
 import Loading from "../loading/Loading";
 
+const CACHE_KEY = `gh:pinned:v1:${openSource.githubUserName}`;
+const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
+
 function getRepoData(callback) {
+  // Try cache first to avoid unnecessary API calls/rate-limit
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (raw) {
+      const cached = JSON.parse(raw);
+      if (cached?.ts && Date.now() - cached.ts < CACHE_TTL_MS && Array.isArray(cached?.data)) {
+        callback(cached.data);
+        return; // Use cache and stop here
+      }
+    }
+  } catch (_) {
+    // ignore cache errors
+  }
   const token = openSource.githubConvertedToken;
   if (!token) {
-    console.warn(
-      "GitHub: REACT_APP_GITHUB_TOKEN not found. Skipping Open Source projects fetch. Provide a read-only token in .env.development/.env.production before building.",
-    );
+    console.warn("GitHub: REACT_APP_GITHUB_TOKEN not found. Using cached data if available; skipping fetch.");
+    // If we didn't early return from cache above, return Error to hide section
     callback("Error");
     return;
   }
@@ -63,11 +78,27 @@ function getRepoData(callback) {
       `,
     })
     .then((result) => {
-      callback(result.data.user.pinnedItems.edges);
-      console.log(result);
+      const edges = result.data.user.pinnedItems.edges;
+      callback(edges);
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: edges }));
+      } catch (_) {
+        // ignore quota/storage errors
+      }
     })
     .catch((error) => {
       console.log(error);
+      // On error, try to serve stale cache
+      try {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (raw) {
+          const cached = JSON.parse(raw);
+          if (cached && Array.isArray(cached.data)) {
+            callback(cached.data);
+            return;
+          }
+        }
+      } catch (_) {}
       callback("Error");
       console.log(
         "Because of this Error, nothing is shown in place of Projects section. Projects section not configured",
@@ -81,16 +112,23 @@ const renderLoader = () => <Loading />;
 export default function Projects() {
   const GithubRepoCard = lazy(() => import("../../components/githubRepoCard/GithubRepoCard"));
   const [repo, setrepo] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const setrepoFunction = useCallback((array) => {
     setrepo(array);
+    setLoading(false);
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     getRepoData(setrepoFunction);
   }, [setrepoFunction]);
 
-  if (!(typeof repo === "string" || repo instanceof String)) {
+  if (loading) {
+    return renderLoader();
+  }
+
+  if (!(typeof repo === "string" || repo instanceof String) && Array.isArray(repo) && repo.length > 0) {
     return (
       <Suspense fallback={renderLoader()}>
         <div className="main" id="opensource">

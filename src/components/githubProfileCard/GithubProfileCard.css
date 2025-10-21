@@ -68,11 +68,15 @@
 
 /* Activity heatmap */
 .gh-heatmap {
+  --gh-cell-size: 12px; /* baseline cell size */
   display: flex;
   gap: 2px;
   flex-wrap: nowrap;
   align-items: center;
   margin-bottom: 1rem;
+  width: 100%;
+  overflow-x: auto; /* keep readable on very narrow screens */
+  -webkit-overflow-scrolling: touch;
 }
 
 .gh-heatmap-week {
@@ -82,8 +86,8 @@
 }
 
 .gh-heatmap-day {
-  width: 10px;
-  height: 10px;
+  width: var(--gh-cell-size);
+  height: var(--gh-cell-size);
   display: inline-block;
   border-radius: 2px;
   border: 1px solid var(--gh-day-border);
@@ -177,15 +181,7 @@
 
 /* Inner layout for activity card: avatar left, content right */
 .activity-card-content {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 1.25rem;
-  align-items: start;
-}
-
-.activity-card-avatar {
-  display: flex;
-  justify-content: flex-start;
+  display: block;
 }
 
 .activity-card-main {
@@ -203,9 +199,7 @@
   }
 
   .activity-card-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: block;
   }
 
   .desc-prof {
@@ -213,6 +207,22 @@
     font-size: 16px;
   }
 
+  /* Stats: enforce 3 per row on desktop, responsive down to 2/1 */
+  .gh-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    .gh-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .gh-stats {
+      grid-template-columns: 1fr;
+    }
+  }
   .gh-stats {
     justify-content: center;
   }
