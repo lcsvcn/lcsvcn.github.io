@@ -11,7 +11,7 @@ export default function Profile() {
   const [prof, setrepo] = useState([]);
   const fetchedRef = useRef(false);
   // TTL constant is stable and used inside the effect
-  const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
+  const CACHE_TTL_MS = useRef(12 * 60 * 60 * 1000).current; // 12 hours
   useEffect(() => {
     if (fetchedRef.current) return;
     fetchedRef.current = true;
@@ -113,7 +113,7 @@ export default function Profile() {
         console.log("Because of this Error Contact Section is Showed instead of Profile");
         openSource.showGithubProfile = "false";
       });
-  }, []);
+  }, [CACHE_TTL_MS]);
   if (openSource.showGithubProfile === "true" && !(typeof prof === "string" || prof instanceof String)) {
     return (
       <Suspense fallback={renderLoader()}>

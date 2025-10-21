@@ -6,7 +6,6 @@ import { contactInfo } from "../../portfolio";
 
 export default function GithubProfileCard({ prof }) {
   // Apollo cache objects are frozen in dev; never mutate props.
-  const contributions = prof?.contributionsCollection?.contributionCalendar?.weeks || [];
   const totalCommits = prof?.contributionsCollection?.totalCommitContributions || 0;
   const followers = prof?.followers?.totalCount || 0;
   const following = prof?.following?.totalCount || 0;
@@ -16,6 +15,7 @@ export default function GithubProfileCard({ prof }) {
 
   // Determine intensity level (0-4) per day from contributionCount using GitHub-like bucketizing
   const levelWeeks = useMemo(() => {
+    const contributions = prof?.contributionsCollection?.contributionCalendar?.weeks || [];
     // Compute global max to scale buckets when counts are low
     let max = 0;
     for (const w of contributions) {
@@ -36,7 +36,7 @@ export default function GithubProfileCard({ prof }) {
         level: buckets(d.contributionCount || 0),
       })),
     }));
-  }, [contributions]);
+  }, [prof?.contributionsCollection?.contributionCalendar?.weeks]);
 
   const heatmapRef = useRef(null);
 
