@@ -25,7 +25,6 @@ if (POSTHOG_KEY && POSTHOG_HOST) {
     loaded: (ph) => {
       if (process.env.NODE_ENV === "development") {
         ph.debug(true);
-        console.log("PostHog loaded successfully");
       }
       ph.startSessionRecording?.();
     },
